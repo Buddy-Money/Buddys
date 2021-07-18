@@ -14,7 +14,7 @@ class Main extends Component {
               <form onSubmit={(event) => {
                 event.preventDefault()
                 const description = this.imageDescription.value
-                this.props.uploadImage(description)
+                this.props.uploadDonationRequest(description)
               }} >
                 <input type='file' accept=".jpg, .jpeg, .png, .bmp, .gif" onChange={this.props.captureFile} />
                   <div className="form-group mr-sm-2">
