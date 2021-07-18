@@ -1,3 +1,3 @@
-## Trustless donations for everybody
+## Trustless donations for anyone
 
 
