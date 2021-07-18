@@ -2,7 +2,7 @@ pragma solidity ^0.5.0;
 
 contract Donator {
   string public name;
-  uint public donationCount = 0;
+  uint public donationRequestsCount = 0;
   mapping(uint => DonationRequest) public donationRequests;
 
   struct DonationRequest {
@@ -38,13 +38,13 @@ contract Donator {
     require(bytes(_description).length > 0);
     require(msg.sender!=address(0));
 
-    donationCount ++;
-    donationRequests[donationCount] = DonationRequest(donationCount, hash, _description, 0, msg.sender);
-    emit DonationRequestCreated(donationCount, hash, _description, 0, msg.sender);
+    donationRequestsCount ++;
+    donationRequests[donationRequestsCount] = DonationRequest(donationRequestsCount, hash, _description, 0, msg.sender);
+    emit DonationRequestCreated(donationRequestsCount, hash, _description, 0, msg.sender);
   }
 
   function donate(uint _id) public payable {
-    require(_id > 0 && _id <= donationCount);
+    require(_id > 0 && _id <= donationRequestsCount);
 
     DonationRequest memory _donationRequest = donationRequests[_id];
 
