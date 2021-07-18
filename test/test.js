@@ -1,14 +1,14 @@
-const Decentragram = artifacts.require('./Decentragram.sol')
+const Donator = artifacts.require('./Donator.sol')
 
 require('chai')
   .use(require('chai-as-promised'))
   .should()
 
-contract('Decentragram', ([deployer, author, tipper]) => {
+contract('Donator', ([deployer, author, tipper]) => {
   let decentragram
 
   before(async () => {
-    decentragram = await Decentragram.deployed()
+    decentragram = await Donator.deployed()
   })
 
   describe('deployment', async () => {
@@ -22,7 +22,7 @@ contract('Decentragram', ([deployer, author, tipper]) => {
 
     it('has a name', async () => {
       const name = await decentragram.name()
-      assert.equal(name, 'Decentragram')
+      assert.equal(name, 'Donator')
     })
   })
 
