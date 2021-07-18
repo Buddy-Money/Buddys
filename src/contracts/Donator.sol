@@ -2,68 +2,60 @@ pragma solidity ^0.5.0;
 
 contract Donator {
   string public name;
-  uint public imageCount = 0;
-  mapping(uint => Image) public images;
+  uint public donationCount = 0;
+  mapping(uint => DonationRequest) public donationRequests;
 
-  struct Image {
+  struct DonationRequest {
     uint id;
     string hash;
     string description;
-    uint tipAmount;
-    address payable author;
+    uint donationAmount;
+    address payable receiverAddress;
   }
 
-  event ImageCreated(
+  event DonationRequestCreated(
     uint id,
     string hash,
     string description,
-    uint tipAmount,
-    address payable author
+    uint donationAmount,
+    address payable receiverAddress
   );
 
-  event ImageTipped(
+  event DonationRequestTipped(
     uint id,
     string hash,
     string description,
-    uint tipAmount,
-    address payable author
+    uint donationAmount,
+    address payable receiverAddress
   );
 
   constructor() public {
     name = "Donator";
   }
 
-  function uploadImage(string memory _imgHash, string memory _description) public {
-    // Make sure the image hash exists
-    require(bytes(_imgHash).length > 0);
-    // Make sure image description exists
+  function uploadDonationRequest(string memory hash, string memory _description) public {
+    require(bytes(hash).length > 0);
     require(bytes(_description).length > 0);
-    // Make sure uploader address exists
     require(msg.sender!=address(0));
 
-    // Increment image id
-    imageCount ++;
-
-    // Add Image to the contract
-    images[imageCount] = Image(imageCount, _imgHash, _description, 0, msg.sender);
-    // Trigger an event
-    emit ImageCreated(imageCount, _imgHash, _description, 0, msg.sender);
+    donationCount ++;
+    donationRequests[donationCount] = DonationRequest(donationCount, hash, _description, 0, msg.sender);
+    emit DonationRequestCreated(donationCount, hash, _description, 0, msg.sender);
   }
 
-  function tipImageOwner(uint _id) public payable {
-    // Make sure the id is valid
-    require(_id > 0 && _id <= imageCount);
-    // Fetch the image
-    Image memory _image = images[_id];
-    // Fetch the author
-    address payable _author = _image.author;
-    // Pay the author by sending them Ether
-    address(_author).transfer(msg.value);
-    // Increment the tip amount
-    _image.tipAmount = _image.tipAmount + msg.value;
-    // Update the image
-    images[_id] = _image;
-    // Trigger an event
-    emit ImageTipped(_id, _image.hash, _image.description, _image.tipAmount, _author);
+  function donate(uint _id) public payable {
+    require(_id > 0 && _id <= donationCount);
+
+    DonationRequest memory _donationRequest = donationRequests[_id];
+
+    address payable _receiverAddress = _donationRequest.receiverAddress;
+
+    address(_receiverAddress).transfer(msg.value);
+
+    _donationRequest.donationAmount = _donationRequest.donationAmount + msg.value;
+
+    donationRequests[_id] = _donationRequest;
+
+    emit DonationRequestTipped(_id, _donationRequest.hash, _donationRequest.description, _donationRequest.donationAmount, _receiverAddress);
   }
 }
