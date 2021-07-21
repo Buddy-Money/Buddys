@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
-import { InputGroup, FormControl, Button, Container } from 'react-bootstrap'
+import InputGroup from 'react-bootstrap/InputGroup'
+import FormControl from 'react-bootstrap/FormControl'
+import Button from 'react-bootstrap/Button'
+import Container from 'react-bootstrap/Container'
 import './Main.css'
 
 class Main extends Component {
@@ -7,7 +10,6 @@ class Main extends Component {
   render() {
     return (
       <Container className="container">
-
         <p>&nbsp;</p>
         <h2>Request a Donation</h2>
         <form onSubmit={(event) => {
@@ -23,7 +25,7 @@ class Main extends Component {
               type="text"
               ref={(input) => { this.donationRequestDescription = input }}
               className="form-control"
-              placeholder="Share your donation story..."
+              placeholder="Description..."
               required />
           </div>
           <button type="submit" className="btn btn-primary btn-block btn-lg">Submit!</button>
@@ -42,21 +44,27 @@ class Main extends Component {
                 </li>
                 <li key={key} className="list-group-item py-2">
                   <small className="float-left mt-1 text-muted">
-                    TIPS: {window.web3.utils.fromWei(donationRequest.donationAmount.toString(), 'Ether')} ETH
-                  </small>
-                  <button
-                    className="btn btn-link btn-sm float-right pt-0"
-                    name={donationRequest.id}
-                    onClick={(event) => {
-                      let donationAmount = window.web3.utils.toWei('0.1', 'Ether')
-                      console.log(event.target.name, donationAmount)
-                      this.props.donate(event.target.name, donationAmount)
-                    }}
-                  >
-                    TIP 0.1 ETH
-                  </button>
-                </li>
-                <li className="list-group-item py-2">
+                    Donations: {window.web3.utils.fromWei(donationRequest.donationAmount.toString(), 'Ether')} ETH
+                  </small></li>
+                <li className="list-group-item">
+                  <InputGroup className="mb-3 donation-screen">
+                    <FormControl id="donationAmount"
+                      placeholder="Amount of Ether"
+                      aria-label="Amount of Ether"
+                    />
+                    <InputGroup.Append>
+                      <Button
+                        name={donationRequest.id}
+                        onClick={(event) => {
+                          let amount = document.getElementById("donationAmount").value.toString()
+                          let donationAmount = window.web3.utils.toWei(amount, 'Ether')
+                          console.log(event.target.name, donationAmount)
+                          this.props.donate(event.target.name, donationAmount)
+                        }}>
+                        Donate
+                      </Button>
+                    </InputGroup.Append>
+                  </InputGroup>
                 </li>
               </ul>
             </div>
