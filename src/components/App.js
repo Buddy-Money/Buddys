@@ -1,6 +1,5 @@
 import Donator from '../abis/Donator.json'
 import React, { Component } from 'react';
-import Identicon from 'identicon.js';
 import Navbar from './Navbar'
 import Main from './Main'
 import Web3 from 'web3';
@@ -8,7 +7,7 @@ import './App.css';
 
 //Declare IPFS
 const ipfsClient = require('ipfs-http-client')
-const ipfs = ipfsClient({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' }) // leaving out the arguments will default to these values
+const ipfs = ipfsClient({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' })
 
 class App extends Component {
 
@@ -74,7 +73,6 @@ class App extends Component {
 
   uploadDonationRequest = description => {
     ipfs.add(this.state.buffer, (error, result) => {
-      console.log('Ipfs result', result)
       if(error) {
         console.error(error)
         return
