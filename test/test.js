@@ -5,15 +5,15 @@ require('chai')
   .should()
 
 contract('Donator', ([deployer, author, tipper]) => {
-  let decentragram
+  let donator
 
   before(async () => {
-    decentragram = await Donator.deployed()
+    donator = await Donator.deployed()
   })
 
   describe('deployment', async () => {
     it('deploys successfully', async () => {
-      const address = await decentragram.address
+      const address = await donator.address
       assert.notEqual(address, 0x0)
       assert.notEqual(address, '')
       assert.notEqual(address, null)
@@ -21,7 +21,7 @@ contract('Donator', ([deployer, author, tipper]) => {
     })
 
     it('has a name', async () => {
-      const name = await decentragram.name()
+      const name = await donator.name()
       assert.equal(name, 'Donator')
     })
   })
@@ -31,8 +31,8 @@ contract('Donator', ([deployer, author, tipper]) => {
     const hash = 'QmV8cfu6n4NT5xRr2AHdKxFMTZEJrA44qgrBCr739BN9Wb'
 
     before(async () => {
-      result = await decentragram.uploadImage(hash, 'Image description', { from: author })
-      imageCount = await decentragram.imageCount()
+      result = await donator.uploadImage(hash, 'Image description', { from: author })
+      imageCount = await donator.imageCount()
     })
 
     //check event
@@ -48,15 +48,15 @@ contract('Donator', ([deployer, author, tipper]) => {
 
 
       // FAILURE: Image must have hash
-      await decentragram.uploadImage('', 'Image description', { from: author }).should.be.rejected;
+      await donator.uploadImage('', 'Image description', { from: author }).should.be.rejected;
 
       // FAILURE: Image must have description
-      await decentragram.uploadImage('Image hash', '', { from: author }).should.be.rejected;
+      await donator.uploadImage('Image hash', '', { from: author }).should.be.rejected;
     })
 
     //check from Struct
     it('lists images', async () => {
-      const image = await decentragram.images(imageCount)
+      const image = await donator.images(imageCount)
       assert.equal(image.id.toNumber(), imageCount.toNumber(), 'id is correct')
       assert.equal(image.hash, hash, 'Hash is correct')
       assert.equal(image.description, 'Image description', 'description is correct')
@@ -70,7 +70,7 @@ contract('Donator', ([deployer, author, tipper]) => {
       oldAuthorBalance = await web3.eth.getBalance(author)
       oldAuthorBalance = new web3.utils.BN(oldAuthorBalance)
 
-      result = await decentragram.tipImageOwner(imageCount, { from: tipper, value: web3.utils.toWei('1', 'Ether') })
+      result = await donator.tipImageOwner(imageCount, { from: tipper, value: web3.utils.toWei('1', 'Ether') })
 
       // SUCCESS
       const event = result.logs[0].args
@@ -94,7 +94,7 @@ contract('Donator', ([deployer, author, tipper]) => {
       assert.equal(newAuthorBalance.toString(), expectedBalance.toString())
 
       // FAILURE: Tries to tip a image that does not exist
-      await decentragram.tipImageOwner(99, { from: tipper, value: web3.utils.toWei('1', 'Ether')}).should.be.rejected;
+      await donator.tipImageOwner(99, { from: tipper, value: web3.utils.toWei('1', 'Ether')}).should.be.rejected;
     })
   })
 })

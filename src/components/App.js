@@ -4,6 +4,7 @@ import Navbar from './Navbar'
 import Main from './Main'
 import Web3 from 'web3';
 import './App.css';
+import { Container } from 'react-bootstrap'
 
 //Declare IPFS
 const ipfsClient = require('ipfs-http-client')
@@ -37,7 +38,7 @@ class App extends Component {
 
     const networkId = await web3.eth.net.getId()
     const networkData = Donator.networks[networkId]
-    if(networkData) {
+    if (networkData) {
       const donator = new web3.eth.Contract(Donator.abi, networkData.address)
       this.setState({ donator })
       const donationRequestsCount = await donator.methods.donationRequestsCount().call()
@@ -51,9 +52,9 @@ class App extends Component {
       }
       // Sort donationRequests. Show highest tipped donationRequests first
       this.setState({
-        donationRequests: this.state.donationRequests.sort((a,b) => b.donationAmount - a.donationAmount )
+        donationRequests: this.state.donationRequests.sort((a, b) => b.donationAmount - a.donationAmount)
       })
-      this.setState({ loading: false})
+      this.setState({ loading: false })
     } else {
       window.alert('Donator contract not deployed to detected network.')
     }
@@ -73,7 +74,7 @@ class App extends Component {
 
   uploadDonationRequest = description => {
     ipfs.add(this.state.buffer, (error, result) => {
-      if(error) {
+      if (error) {
         console.error(error)
         return
       }
@@ -110,14 +111,17 @@ class App extends Component {
     return (
       <div>
         <Navbar account={this.state.account} />
-        { this.state.loading
+        {this.state.loading
           ? <div id="loader" className="text-center mt-5"><p>Loading...</p></div>
-          : <Main
+          :
+          <Container>
+            <Main
               donationRequests={this.state.donationRequests}
               captureFile={this.captureFile}
               uploadDonationRequest={this.uploadDonationRequest}
               donate={this.donate}
             />
+          </Container>
         }
       </div>
     );
