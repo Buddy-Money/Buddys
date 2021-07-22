@@ -8,23 +8,13 @@ class Navbar extends Component {
     return (
       <nav className="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
         <a
-          className="navbar-brand col-sm-3 col-md-2 mr-0"
+          className="navbar-brand col-sm-3 col-md-2 mr-0 text-center"
           href="https://github.com/baldwinr/Donator"
           target="_blank"
           rel="noopener noreferrer"
         >
           Donator
         </a>
-        <ul className="navbar-nav px-3">
-          <li className="nav-item text-nowrap d-none d-sm-none d-sm-block">
-          <small className="text-primary">
-              <small>Account: </small>
-            </small>
-            <small className="text-primary">
-              <small id="account">{this.props.account}</small>
-            </small>
-          </li>
-        </ul>
       </nav>
     );
   }
