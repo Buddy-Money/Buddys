@@ -32,6 +32,8 @@ contract Donator {
   constructor() public {
     name = "Donator";
   }
+  
+  function () external payable {}
 
   function uploadDonationRequest(string memory hash, string memory _description) public {
     require(bytes(hash).length > 0);
@@ -45,17 +47,14 @@ contract Donator {
 
   function donate(uint _id) public payable {
     require(_id > 0 && _id <= donationRequestsCount);
-
+    
     DonationRequest memory _donationRequest = donationRequests[_id];
-
     address payable _receiverAddress = _donationRequest.receiverAddress;
-
+    
     address(_receiverAddress).transfer(msg.value);
-
     _donationRequest.donationAmount = _donationRequest.donationAmount + msg.value;
 
     donationRequests[_id] = _donationRequest;
-
     emit DonationRequestDonated(_id, _donationRequest.hash, _donationRequest.description, _donationRequest.donationAmount, _receiverAddress);
   }
 }
