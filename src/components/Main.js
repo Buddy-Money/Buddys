@@ -22,7 +22,6 @@ class Main extends Component {
             <br></br>
             <textarea
               id="donationRequestDescription"
-              className="description-input"
               ref={(input) => { this.donationRequestDescription = input }}
               className="form-control"
               placeholder="Description..."
@@ -47,7 +46,7 @@ class Main extends Component {
                     Donations: {window.web3.utils.fromWei(donationRequest.donationAmount.toString(), 'Ether')} ETH
                   </small></li>
                 <li className="list-group-item">
-                  <InputGroup className="mb-3 donation-screen">
+                  <InputGroup className="mb-3 input-div">
                     <FormControl
                       ref={(input) => { this.donationAmount = input }}
                       placeholder="Amount of Ether"
