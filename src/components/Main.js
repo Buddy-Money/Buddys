@@ -20,22 +20,23 @@ class Main extends Component {
           <input type='file' accept=".jpg, .jpeg, .png, .bmp, .gif" onChange={this.props.captureFile} />
           <div className="form-group mr-sm-2">
             <br></br>
-            <input
+            <textarea
               id="donationRequestDescription"
-              type="text"
+              rows={5}
+              className="description-input"
               ref={(input) => { this.donationRequestDescription = input }}
               className="form-control"
               placeholder="Description..."
               required />
-          </div>
-          <button type="submit" className="btn btn-primary btn-block btn-lg">Submit!</button>
+          </div><br></br>
+          <Button type="submit" className="btn btn-primary btn-block btn-lg submit-button">Submit!</Button>
         </form>
         <p>&nbsp;</p>
         {this.props.donationRequests.map((donationRequest, key) => {
           return (
             <div className="card mb-4" key={key} >
               <div className="card-header">
-                <small className="text-muted">{donationRequest.author}</small>
+                <small className="text-muted">{donationRequest.receiverAddress}</small>
               </div>
               <ul id="donationRequestList" className="list-group list-group-flush">
                 <li className="list-group-item">
