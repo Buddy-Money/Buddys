@@ -21,7 +21,7 @@ contract Donator {
     address payable receiverAddress
   );
 
-  event DonationRequestTipped(
+  event DonationRequestDonated(
     uint id,
     string hash,
     string description,
@@ -56,6 +56,6 @@ contract Donator {
 
     donationRequests[_id] = _donationRequest;
 
-    emit DonationRequestTipped(_id, _donationRequest.hash, _donationRequest.description, _donationRequest.donationAmount, _receiverAddress);
+    emit DonationRequestDonated(_id, _donationRequest.hash, _donationRequest.description, _donationRequest.donationAmount, _receiverAddress);
   }
 }
