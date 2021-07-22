@@ -22,7 +22,6 @@ class Main extends Component {
             <br></br>
             <textarea
               id="donationRequestDescription"
-              rows={5}
               className="description-input"
               ref={(input) => { this.donationRequestDescription = input }}
               className="form-control"
@@ -49,7 +48,8 @@ class Main extends Component {
                   </small></li>
                 <li className="list-group-item">
                   <InputGroup className="mb-3 donation-screen">
-                    <FormControl id="donationAmount"
+                    <FormControl
+                      ref={(input) => { this.donationAmount = input }}
                       placeholder="Amount of Ether"
                       aria-label="Amount of Ether"
                     />
@@ -57,8 +57,8 @@ class Main extends Component {
                       <Button
                         name={donationRequest.id}
                         onClick={(event) => {
-                          let amount = document.getElementById("donationAmount").value.toString()
-                          let donationAmount = window.web3.utils.toWei(amount, 'Ether')
+                          let amount = this.donationAmount.value
+                          let donationAmount = window.web3.utils.toWei(amount.toString(), 'Ether')
                           console.log(event.target.name, donationAmount)
                           this.props.donate(event.target.name, donationAmount)
                         }}>
