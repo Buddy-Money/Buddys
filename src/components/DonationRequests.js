@@ -110,7 +110,6 @@ class DonationRequests extends Component {
 
   render() {
     return (
-      // Request a new Donation
       <Container className="container">
         <p>&nbsp;</p>
         <h2>Request a Donation</h2>
@@ -133,12 +132,13 @@ class DonationRequests extends Component {
         </form>
         <p>&nbsp;</p>
 
-        // Donation Requests
         {this.state.donationRequests.map((donationRequest, key) => {
           return (
             <div className="card mb-4" key={key} >
               <div className="card-header">
-                <small className="text-muted">{donationRequest.receiverAddress}</small>
+                <small className="text-muted">
+                  Receiver Address: {donationRequest.receiverAddress}
+                </small>
               </div>
 
               <ul id="donationRequestList" className="list-group list-group-flush">
@@ -149,11 +149,11 @@ class DonationRequests extends Component {
 
                 <li key={key} className="list-group-item py-2">
                   <small className="float-left mt-1 text-muted">
-                    Donations: {window.web3.utils.fromWei(donationRequest.donationAmount.toString(), 'Ether')} ETH
+                    Unclaimed Donations: {window.web3.utils.fromWei(donationRequest.unclaimedDonations.toString(), 'Ether')} ETH <br></br>
+                    Claimed Donations: {window.web3.utils.fromWei(donationRequest.claimedDonations.toString(), 'Ether')} ETH
                   </small></li>
                 <li className="list-group-item">
 
-                  // Make a new Donation
                   <InputGroup className="mb-3 input-div">
                     <FormControl
                       ref={(input) => { this.donationAmount = input }}
