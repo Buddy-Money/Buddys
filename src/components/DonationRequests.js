@@ -50,7 +50,7 @@ class DonationRequests extends Component {
           donationRequests: [...this.state.donationRequests, donationRequest]
         })
       }
-      // Sort donationRequests. Show highest tipped donationRequests first
+      // Sort donationRequests. Show requests with the most donations first
       this.setState({
         donationRequests: this.state.donationRequests.sort((a, b) => b.donationAmount - a.donationAmount)
       })
