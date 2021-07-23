@@ -9,10 +9,6 @@ contract Donator {
     uint256 public donationsCount = 0;
     mapping(uint256 => Donation) public donations;
 
-    // The ids of all of the Donations in the 'donations' mapping, used
-    // to iterate over the mapping when issuing refunds.
-    uint256[] public donationKeys;
-
     struct DonationRequest {
         uint256 id;
         string hash;
@@ -81,9 +77,6 @@ contract Donator {
 
         donationsCount++;
 
-        // Store the key to the mapping
-        donationKeys.push(donationsCount);
-
         // Set a spot in the mapping to a new Donation
         donations[donationsCount] = Donation(
             donationsCount,
@@ -129,14 +122,5 @@ contract Donator {
         address(_donation.donator).transfer(_donation.amount);
 
         delete (donations[_donationId]);
-    }
-
-    function removeDonationKeyByValue(uint256 _indexOfKey) public {
-        for (uint256 i = _indexOfKey; i < donationKeys.length - 1; i++) {
-            donationKeys[i] = donationKeys[i + 1];
-        }
-
-        delete donationKeys[donationKeys.length - 1];
-        donationKeys.length--;
     }
 }
