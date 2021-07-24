@@ -1,5 +1,5 @@
-## Donator
-# Trustless donations for everybody
+# Donator
+## Trustless donations for everybody
 
 Tools:
 
