@@ -94,18 +94,48 @@ class DonationRequests extends Component {
     })
   }
 
+  updateDonationAmount(evt) {
+    this.setState({
+      donationAmount: evt.target.value
+    });
+  }
+
+  updateDonationDescription(evt) {
+    this.setState({
+      donationDescription: evt.target.value
+    });
+  }
+
+  updateExpirationDate(evt) {
+    this.setState({
+      expirationDate: evt.target.value
+    });
+  }
+
+  handleDonate(evt) {
+    let amount = this.state.donationAmount
+    let donationDescription = this.state.donationDescription
+    let donationAmount = window.web3.utils.toWei(amount.toString(), 'Ether')
+    let expirationDate = new Date(this.state.expirationDate)
+    let expirationDateInUnixTime = expirationDate / 1000;
+    this.donate(evt.target.name, donationDescription, expirationDateInUnixTime, donationAmount)
+  }
+
   constructor(state) {
     super(state)
     this.state = {
       account: '',
       donator: null,
       donationRequests: [],
+      donationAmount: 0,
+      donationDescription: '',
+      expirationDate: new Date(),
       loading: true
     }
 
-    this.donationAmount= React.createRef()
-    this.donationDescription= React.createRef()
-    this.expirationDate= React.createRef()
+    this.donationAmount = React.createRef()
+    this.donationDescription = React.createRef()
+    this.expirationDate = React.createRef()
 
     this.uploadDonationRequest = this.uploadDonationRequest.bind(this)
     this.donate = this.donate.bind(this)
@@ -160,32 +190,25 @@ class DonationRequests extends Component {
 
                   <InputGroup className="mb-3 input-div">
                     <FormControl
-                      ref={this.donationAmount}
+                      onChange={evt => this.updateDonationAmount(evt)}
                       placeholder="Amount of Ether"
                       aria-label="Amount of Ether"
                     />
                     <FormControl
-                      ref={this.donationDescription}
+                      onChange={evt => this.updateDonationDescription(evt)}
                       placeholder="Add a Description"
                       aria-label="Donation Description"
                     />
                     <FormControl
                       type="date"
-                      ref={this.expirationDate}
+                      onChange={evt => this.updateExpirationDate(evt)}
                       placeholder="Exp Date"
                       aria-label="Expiration Date"
                     />
                     <InputGroup.Append>
                       <Button
                         name={donationRequest.id}
-                        onClick={(event) => {
-                          let amount = this.donationAmount.current.value
-                          let donationDescription = this.donationDescription.current.value
-                          let donationAmount = window.web3.utils.toWei(amount.toString(), 'Ether')
-                          let expDate = new Date(this.expirationDate.current.value)
-                          let expDateInUnixTime = expDate / 1000;
-                          this.donate(event.target.name, donationDescription, expDateInUnixTime, donationAmount,)
-                        }}>
+                        onClick={(event) => { this.handleDonate(event) }}>
                         Donate
                       </Button>
                     </InputGroup.Append>
