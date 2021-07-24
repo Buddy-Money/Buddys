@@ -39,7 +39,7 @@ class DonationRequests extends Component {
     this.captureFile = this.captureFile.bind(this)
   }
 
-  async componentWillMount() {
+  async componentDidMount() {
     await this.loadWeb3()
     await this.loadBlockchainData()
   }
@@ -135,7 +135,7 @@ class DonationRequests extends Component {
   async buildDonationsByRequestId(donationRequestId) {
     let donations = []
     for (var i = 0; i < this.state.donationsCount; i++) {
-      if (this.state.donations[i].donationRequestId == donationRequestId) {
+      if (this.state.donations[i].donationRequestId === donationRequestId) {
         donations.push(this.state.donations[i])
       }
     }
@@ -240,7 +240,7 @@ class DonationRequests extends Component {
 
                 <ul id="donationRequestList" className="list-group list-group-flush">
                   <li className="list-group-item">
-                    <p className="text-center"><img src={`https://ipfs.infura.io/ipfs/${donationRequest.hash}`} style={{ maxWidth: '800px' }} /></p>
+                    <p className="text-center"><img src={`https://ipfs.infura.io/ipfs/${donationRequest.hash}`} style={{ maxWidth: '800px' }} alt=""/></p>
                     <p>{donationRequest.description}</p>
                   </li>
 
