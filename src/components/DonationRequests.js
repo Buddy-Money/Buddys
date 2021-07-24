@@ -103,6 +103,10 @@ class DonationRequests extends Component {
       loading: true
     }
 
+    this.donationAmount= React.createRef()
+    this.donationDescription= React.createRef()
+    this.expirationDate= React.createRef()
+
     this.uploadDonationRequest = this.uploadDonationRequest.bind(this)
     this.donate = this.donate.bind(this)
     this.captureFile = this.captureFile.bind(this)
@@ -143,7 +147,7 @@ class DonationRequests extends Component {
 
               <ul id="donationRequestList" className="list-group list-group-flush">
                 <li className="list-group-item">
-                  <p className="text-center"><img src={`https://ipfs.infura.io/ipfs/${donationRequest.hash}`} style={{ maxWidth: '420px' }} /></p>
+                  <p className="text-center"><img src={`https://ipfs.infura.io/ipfs/${donationRequest.hash}`} style={{ maxWidth: '800px' }} /></p>
                   <p>{donationRequest.description}</p>
                 </li>
 
@@ -156,29 +160,29 @@ class DonationRequests extends Component {
 
                   <InputGroup className="mb-3 input-div">
                     <FormControl
-                      ref={(input) => { this.donationAmount = input }}
+                      ref={this.donationAmount}
                       placeholder="Amount of Ether"
                       aria-label="Amount of Ether"
                     />
                     <FormControl
-                      ref={(input) => { this.donationDescription = input }}
+                      ref={this.donationDescription}
                       placeholder="Add a Description"
                       aria-label="Donation Description"
                     />
                     <FormControl
                       type="date"
-                      ref={(input) => { this.expirationDate = input }}
+                      ref={this.expirationDate}
                       placeholder="Exp Date"
-                      aria-label="Donation Description"
+                      aria-label="Expiration Date"
                     />
                     <InputGroup.Append>
                       <Button
                         name={donationRequest.id}
                         onClick={(event) => {
-                          let amount = this.donationAmount.value
-                          let donationDescription = this.donationDescription.value
+                          let amount = this.donationAmount.current.value
+                          let donationDescription = this.donationDescription.current.value
                           let donationAmount = window.web3.utils.toWei(amount.toString(), 'Ether')
-                          let expDate = new Date(this.expirationDate.value)
+                          let expDate = new Date(this.expirationDate.current.value)
                           let expDateInUnixTime = expDate / 1000;
                           this.donate(event.target.name, donationDescription, expDateInUnixTime, donationAmount,)
                         }}>

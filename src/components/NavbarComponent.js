@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { Navbar, Nav } from 'react-bootstrap';
 import { Link, Switch, Route } from 'react-router-dom'
-import Home from './Home';
 import DonationRequests from './DonationRequests';
-import ReceiverRequests from './ReceiverRequests';
+import MyDonations from './MyDonations';
+import MyRequests from './MyRequests';
 
 class NavbarComponent extends Component {
 
@@ -15,17 +15,17 @@ class NavbarComponent extends Component {
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="mr-auto">
-              <Nav.Link as={Link} to="/home">Home</Nav.Link>
               <Nav.Link as={Link} to="/donation-requests">Donation Requests</Nav.Link>
-              <Nav.Link as={Link} to="/receiver-requests">Receiver Requests</Nav.Link>
+              <Nav.Link as={Link} to="/my-donations">My Donations</Nav.Link>
+              <Nav.Link as={Link} to="/my-requests">My Requests</Nav.Link>
             </Nav>
           </Navbar.Collapse>
         </Navbar>
 
         <Switch>
-          <Route path="/home" component={Home} />
           <Route path="/donation-requests" component={DonationRequests} />
-          <Route path="/receiver-requests" component={ReceiverRequests} />
+          <Route path="/my-donations" component={MyDonations} />
+          <Route path="/my-requests" component={MyRequests} />
         </Switch>
       </div>
     );

@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
 
-class Home extends Component {
+class MyRequests extends Component {
 
   render() {
     return (
       <div>
-        <label>Home</label>
+        <label>My Requests Screen</label>
       </div>
     );
   }
 }
 
-export default Home;
+export default MyRequests;
