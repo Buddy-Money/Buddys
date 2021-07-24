@@ -88,8 +88,10 @@ class DonationRequests extends Component {
     }
   }
 
+  /*
+  * Build the list of DonationRequests from the smart contract.
+  */
   async buildDonationRequestsList() {
-    // Build the list of DonationRequests from the smart contract
     for (var i = 1; i <= this.state.donationRequestsCount; i++) {
       const donationRequest = await this.state.donator.methods.donationRequests(i).call()
       this.setState({
@@ -97,12 +99,15 @@ class DonationRequests extends Component {
       })
     }
 
-    // Sort donationRequests. Show requests with the most donations first
+    // Sort donationRequests. Show requests with the most donations first.
     this.setState({
       donationRequests: this.state.donationRequests.sort((a, b) => b.unclaimedDonations - a.unclaimedDonations)
     })
   }
 
+  /*
+  * Build the list of Donations from the smart contract.
+  */
   async buildDonationsList() {
     for (var i = 1; i <= this.state.donationsCount; i++) {
       const donation = await this.state.donator.methods.donations(i).call()
@@ -112,6 +117,9 @@ class DonationRequests extends Component {
     }
   }
 
+  /*
+  * Build a separate list of Donations for each DonationRequest.
+  */
   async buildDonationsListForEachRequest() {
     for (var i = 0; i < this.state.donationRequestsCount; i++) {
       const list = await this.buildDonationsByRequestId(i + 1)
@@ -121,6 +129,9 @@ class DonationRequests extends Component {
     }
   }
 
+  /*
+  * Used to build a list of Donations for a single DonationRequest.
+  */
   async buildDonationsByRequestId(donationRequestId) {
     let donations = []
     for (var i = 0; i < this.state.donationsCount; i++) {
@@ -132,7 +143,6 @@ class DonationRequests extends Component {
   }
 
   captureFile = event => {
-
     event.preventDefault()
     const file = event.target.files[0]
     const reader = new window.FileReader()
@@ -268,10 +278,11 @@ class DonationRequests extends Component {
                     </InputGroup>
 
                   </li>
-                  <li className="list-group-item">
-                    <Donations donations={this.state.donationsListsForRequests[donationRequest.id - 1]}
-                      web3={this.state.web3}></Donations>
-                  </li>
+                  {this.state.donationsListsForRequests[donationRequest.id - 1].length > 0 ?
+                    <li className="list-group-item">
+                      <Donations donations={this.state.donationsListsForRequests[donationRequest.id - 1]}
+                        web3={this.state.web3}></Donations>
+                    </li> : null}
                 </ul>
               </div>
             )
