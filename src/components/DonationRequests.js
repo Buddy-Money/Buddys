@@ -30,10 +30,6 @@ class DonationRequests extends Component {
       loading: true
     }
 
-    this.donationAmount = React.createRef()
-    this.donationDescription = React.createRef()
-    this.expirationDate = React.createRef()
-
     this.uploadDonationRequest = this.uploadDonationRequest.bind(this)
     this.donate = this.donate.bind(this)
     this.captureFile = this.captureFile.bind(this)
@@ -135,7 +131,7 @@ class DonationRequests extends Component {
   async buildDonationsByRequestId(donationRequestId) {
     let donations = []
     for (var i = 0; i < this.state.donationsCount; i++) {
-      if (this.state.donations[i].donationRequestId === donationRequestId) {
+      if (this.state.donations[i].donationRequestId == donationRequestId) {
         donations.push(this.state.donations[i])
       }
     }
@@ -246,8 +242,8 @@ class DonationRequests extends Component {
 
                   <li key={key} className="list-group-item py-2">
                     <small className="float-left mt-1 text-muted">
-                      Unclaimed Donations: {window.web3.utils.fromWei(donationRequest.unclaimedDonations.toString(), 'Ether')} ETH <br></br>
-                      Claimed Donations: {window.web3.utils.fromWei(donationRequest.claimedDonations.toString(), 'Ether')} ETH
+                      Outstanding Donations: {window.web3.utils.fromWei(donationRequest.unclaimedDonations.toString(), 'Ether')} ETH <br></br>
+                      Accepted Donations: {window.web3.utils.fromWei(donationRequest.claimedDonations.toString(), 'Ether')} ETH
                     </small></li>
                   <li className="list-group-item">
 
