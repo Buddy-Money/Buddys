@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import Donator from '../abis/Donator.json'
-import Donations from './Donations.js'
 import Web3 from 'web3';
 import InputGroup from 'react-bootstrap/InputGroup'
 import FormControl from 'react-bootstrap/FormControl'
@@ -275,10 +274,16 @@ class DonationRequests extends Component {
 
                   </li>
                   {this.state.donationsListsForRequests[donationRequest.id - 1].length > 0 ?
-                    <li className="list-group-item">
-                      <Donations donations={this.state.donationsListsForRequests[donationRequest.id - 1]}
-                        web3={this.state.web3}></Donations>
-                    </li> : null}
+                    Array.from(this.state.donations).map((donation, key) => {
+                      return (<ul key={key} id="donationsList" className="list-group list-group-flush">
+                        <li key={key} className="list-group-item">
+                          <small className="float-left mt-1 text-muted">
+                            Amount: {this.state.web3.utils.fromWei(donation.amount.toString(), 'Ether')} ETH <br></br>
+                            {donation.description}
+                          </small></li>
+                      </ul>
+                      )
+                    }) : null}
                 </ul>
               </div>
             )
