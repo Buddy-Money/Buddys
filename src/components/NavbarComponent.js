@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Navbar, Nav } from 'react-bootstrap';
-import { Link, Switch, Route } from 'react-router-dom'
+import { Link, Switch, Route, Redirect } from 'react-router-dom'
 import DonationRequests from './DonationRequests';
 import MyDonations from './MyDonations';
 import MyRequests from './MyRequests';
@@ -23,6 +23,9 @@ class NavbarComponent extends Component {
         </Navbar>
 
         <Switch>
+          <Route exact path="/">
+            <Redirect to="/donation-requests" />
+          </Route>
           <Route path="/donation-requests" component={DonationRequests} />
           <Route path="/my-donations" component={MyDonations} />
           <Route path="/my-requests" component={MyRequests} />
