@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Figure from 'react-bootstrap/Figure'
 
 class Request extends Component {
 
@@ -19,11 +20,13 @@ class Request extends Component {
           </small>
         </div>
         <li className="list-group-item">
-          <p className="text-center">
-            <img 
-            src={`https://ipfs.infura.io/ipfs/${this.props.request.hash}`} 
-            style={{ maxWidth: '800px' }} alt="" />
-          </p>
+          <div className="text-center">
+            <Figure>
+              <Figure.Image
+                src={`https://ipfs.infura.io/ipfs/${this.props.request.hash}`}
+                style={{ maxWidth: '800px' }} alt="" />
+            </Figure>
+          </div>
           <p>{this.props.request.description}</p>
           <small className="text-muted">
             Outstanding Donations: {
