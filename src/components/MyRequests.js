@@ -183,7 +183,7 @@ class MyRequests extends Component {
                                 {donation.description}
                                 <Button name={donation.id}
                                   onClick={(event) => { this.handlereceiveDonation(event) }}>
-                                  Accept Outstanding Donations
+                                  Accept Donation
                                 </Button>
                               </small>
                             </li>
