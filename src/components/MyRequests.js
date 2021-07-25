@@ -3,7 +3,6 @@ import Donator from '../abis/Donator.json'
 import Web3 from 'web3';
 import Container from 'react-bootstrap/Container'
 import Button from 'react-bootstrap/Button'
-import './DonationRequests.css'
 
 class MyRequests extends Component {
 
@@ -105,6 +104,8 @@ class MyRequests extends Component {
         donations: [...this.state.donations, donation]
       })
     }
+
+    console.log(this.state.donations)
   }
 
   /*
