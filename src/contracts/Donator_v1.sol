@@ -61,7 +61,7 @@ contract Donator {
     ) public payable {
         require(
             _donationRequestId > 0 &&
-                _donationRequestId <= donationRequestsCount
+            _donationRequestId <= donationRequestsCount
         );
 
         DonationRequest memory _donationRequest = donationRequests[
@@ -111,15 +111,21 @@ contract Donator {
         _donationRequest.unclaimedDonations -= _donation.amount;
         donationRequests[_donationRequest.id] = _donationRequest;
 
-        // Make the Donation inactive
         delete (donations[_donationId]);
     }
 
     function refundDonation(uint256 _donationId) public payable {
         Donation memory _donation = donations[_donationId];
+                DonationRequest memory _donationRequest = donationRequests[
+            _donation.donationRequestId
+        ];
 
         // Pay back the donator. Funds come from the smart contract.
         address(_donation.donator).transfer(_donation.amount);
+        
+        // Update the fields on the DonationRequest
+        _donationRequest.unclaimedDonations -= _donation.amount;
+        donationRequests[_donationRequest.id] = _donationRequest;
 
         delete (donations[_donationId]);
     }

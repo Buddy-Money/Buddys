@@ -30,16 +30,12 @@ class DonationRequests extends Component {
       loading: true
     }
 
-    this.donationAmount = React.createRef()
-    this.donationDescription = React.createRef()
-    this.expirationDate = React.createRef()
-
     this.uploadDonationRequest = this.uploadDonationRequest.bind(this)
     this.donate = this.donate.bind(this)
     this.captureFile = this.captureFile.bind(this)
   }
 
-  async componentWillMount() {
+  async componentDidMount() {
     await this.loadWeb3()
     await this.loadBlockchainData()
   }
@@ -240,14 +236,14 @@ class DonationRequests extends Component {
 
                 <ul id="donationRequestList" className="list-group list-group-flush">
                   <li className="list-group-item">
-                    <p className="text-center"><img src={`https://ipfs.infura.io/ipfs/${donationRequest.hash}`} style={{ maxWidth: '800px' }} /></p>
+                    <p className="text-center"><img src={`https://ipfs.infura.io/ipfs/${donationRequest.hash}`} style={{ maxWidth: '800px' }} alt=""/></p>
                     <p>{donationRequest.description}</p>
                   </li>
 
                   <li key={key} className="list-group-item py-2">
                     <small className="float-left mt-1 text-muted">
-                      Unclaimed Donations: {window.web3.utils.fromWei(donationRequest.unclaimedDonations.toString(), 'Ether')} ETH <br></br>
-                      Claimed Donations: {window.web3.utils.fromWei(donationRequest.claimedDonations.toString(), 'Ether')} ETH
+                      Outstanding Donations: {window.web3.utils.fromWei(donationRequest.unclaimedDonations.toString(), 'Ether')} ETH <br></br>
+                      Accepted Donations: {window.web3.utils.fromWei(donationRequest.claimedDonations.toString(), 'Ether')} ETH
                     </small></li>
                   <li className="list-group-item">
 
