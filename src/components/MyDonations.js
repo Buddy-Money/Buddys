@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import Donator from '../abis/Donator.json'
 import Request from './Request.js'
+import Donation from './Donation.js'
 import Web3 from 'web3';
 import Container from 'react-bootstrap/Container'
-import Row from 'react-bootstrap/Row'
-import Col from 'react-bootstrap/Col'
+import Button from 'react-bootstrap/Button'
 import './MyDonations.css'
 
 class MyDonations extends Component {
@@ -64,8 +64,11 @@ class MyDonations extends Component {
       this.setState({ donationsCount })
 
       await this.buildDonationsList()
-      await this.buildDonationRequestsList()
-      await this.buildDonationsListForEachRequest()
+
+      if (this.state.donations.length > 0) {
+        await this.buildDonationRequestsList()
+        await this.buildDonationsListForEachRequest()
+      }
 
       this.setState({ loading: false })
     }
@@ -165,19 +168,56 @@ class MyDonations extends Component {
     return donations
   }
 
+  refundDonation(donationId) {
+    this.setState({ loading: true })
+    this.state.donator.methods.refundDonation(donationId).send({ from: this.state.account }).on('transactionHash', (hash) => {
+      this.setState({ loading: false })
+    })
+  }
+
+  handlerefundDonation(evt) {
+    let donationId = evt.target.name
+    this.receiveDonation(donationId)
+  }
+
   render() {
-    if (this.state.donationRequests.length !== 0) {
+    if (this.state.loading) {
+      return (<label className="text-center">Loading...</label>)
+    }
+    else if (this.state.donationRequests.length !== 0) {
       return (
-        <Container>
+        <Container className="container">
+
           {this.state.donationRequests.map((donationRequest, key) => {
             return (
-              <Row key={key}>
-                <Col>
+              <div className="card mb-4" key={key} >
+
+                <ul id="donationRequestList" className="list-group list-group-flush">
                   <Request
                     request={donationRequest}
-                    web3={this.state.web3} />
-                </Col>
-              </Row>
+                    web3={this.state.web3}
+                  />
+
+                  {Array.from(this.state.donationsListsForRequests[donationRequest.id - 1]).map((donation, key) => {
+                    return (<ul key={key} id="donationsList" className="list-group list-group-flush">
+                      <li key={key} className="list-group-item">
+                        <Donation
+                          donation={donation}
+                          web3={this.state.web3}
+                        />
+                        <small>
+                          <Button
+                            name={donation.id}
+                            onClick={(event) => { this.handleRefundDonation(event) }}>
+                            Revoke Donation
+                          </Button>
+                        </small>
+                      </li>
+                    </ul>
+                    )
+                  })}
+                </ul>
+              </div>
             )
           })}
         </Container>

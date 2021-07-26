@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import Donator from '../abis/Donator.json'
+import Request from './Request.js'
+import Donation from './Donation.js'
 import Web3 from 'web3';
 import Container from 'react-bootstrap/Container'
 import Button from 'react-bootstrap/Button'
@@ -149,54 +151,47 @@ class MyRequests extends Component {
     if (this.state.loading) {
       return (<label className="text-center">Loading...</label>)
     }
-    else {
+    else if (this.state.donationRequests.length !== 0) {
       return (
         <Container className="container">
+
           {this.state.donationRequests.map((donationRequest, key) => {
             return (
               <div className="card mb-4" key={key} >
-                <div className="card-header">
-                  <small className="text-muted">
-                    Receiver Address: {donationRequest.receiverAddress}
-                  </small>
-                </div>
 
                 <ul id="donationRequestList" className="list-group list-group-flush">
-                  <li className="list-group-item">
-                    <p className="text-center"><img src={`https://ipfs.infura.io/ipfs/${donationRequest.hash}`} style={{ maxWidth: '800px' }} alt="" /></p>
-                    <p>{donationRequest.description}</p>
-                  </li>
+                  <Request
+                    request={donationRequest}
+                    web3={this.state.web3}
+                  />
 
-                  <li key={key} className="list-group-item py-2">
-                    <small className="float-left mt-1 text-muted">
-                      Outstanding Donations: {window.web3.utils.fromWei(donationRequest.unclaimedDonations.toString(), 'Ether')} ETH <br></br>
-                      Accepted Donations: {window.web3.utils.fromWei(donationRequest.claimedDonations.toString(), 'Ether')} ETH
-                    </small>
-                  </li>
-                  {
-                    this.state.donationsListsForRequests[donationRequest.id - 1].length > 0 ?
-                      Array.from(this.state.donationsListsForRequests[donationRequest.id - 1]).map((donation, key) => {
-                        return (
-                          <ul key={key} id="donationsList" className="list-group list-group-flush">
-                            <li key={key} className="list-group-item">
-                              <small className="float-left mt-1 text-muted">
-                                Amount: {this.state.web3.utils.fromWei(donation.amount.toString(), 'Ether')} ETH <br></br>
-                                {donation.description}
-                                <Button name={donation.id}
-                                  onClick={(event) => { this.handlereceiveDonation(event) }}>
-                                  Accept Donation
-                                </Button>
-                              </small>
-                            </li>
-                          </ul>
-                        )
-                      }) : null}
+                  {Array.from(this.state.donationsListsForRequests[donationRequest.id - 1]).map((donation, key) => {
+                    return (<ul key={key} id="donationsList" className="list-group list-group-flush">
+                      <li key={key} className="list-group-item">
+                        <Donation
+                          donation={donation}
+                          web3={this.state.web3}
+                        />
+                        <small>
+                          <Button
+                            name={donation.id}
+                            onClick={(event) => { this.handleReceiveDonation(event) }}>
+                            Receive Donation
+                          </Button>
+                        </small>
+                      </li>
+                    </ul>
+                    )
+                  })}
                 </ul>
               </div>
             )
           })}
         </Container>
       );
+    }
+    else {
+      return (null)
     }
   }
 }
