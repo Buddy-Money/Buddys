@@ -30,12 +30,12 @@ class Request extends Component {
           <p>{this.props.request.description}</p>
           <small className="text-muted">
             Outstanding Donations: {
-              window.web3.utils.fromWei(this.props.request.unclaimedDonations.toString(), 'Ether')
+              this.props.web3.utils.fromWei(this.props.request.unclaimedDonations.toString(), 'Ether')
             }
             {' '}ETH</small><br></br>
           <small className="text-muted">
             Accepted Donations: {
-              window.web3.utils.fromWei(this.props.request.claimedDonations.toString(), 'Ether')
+              this.props.web3.utils.fromWei(this.props.request.claimedDonations.toString(), 'Ether')
             }
             {' '}ETH</small>
         </li>

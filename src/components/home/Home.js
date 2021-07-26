@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Donator from '../../abis/Donator.json'
 import Web3 from 'web3';
+import Web3Modal from "web3modal";
 import Donation from '../entities/donation/Donation.js'
 import Request from '../entities/request/Request.js'
 import InputGroup from 'react-bootstrap/InputGroup'
@@ -30,10 +31,6 @@ class Home extends Component {
       expirationDate: new Date(),
       loading: true
     }
-
-    this.uploadDonationRequest = this.uploadDonationRequest.bind(this)
-    this.donate = this.donate.bind(this)
-    this.captureFile = this.captureFile.bind(this)
   }
 
   async componentDidMount() {
@@ -42,22 +39,26 @@ class Home extends Component {
   }
 
   async loadWeb3() {
-    if (window.ethereum) {
-      window.web3 = new Web3(window.ethereum)
-      await window.ethereum.enable()
-    }
-    else if (window.web3) {
-      window.web3 = new Web3(window.web3.currentProvider)
-    }
-    else {
-      window.alert('Non-Ethereum browser detected. You should consider trying MetaMask!')
-    }
-    this.setState({ web3: window.web3 })
+    const providerOptions = {
+      /* See Provider Options Section */
+    };
+
+    const web3Modal = new Web3Modal({
+      network: "mainnet",
+      cacheProvider: true,
+      providerOptions
+    });
+
+    const provider = await web3Modal.connect();
+
+    const web3 = new Web3(provider);
+
+    this.setState({ web3: web3 })
   }
 
   async loadBlockchainData() {
     this.setState({ loading: true })
-    const web3 = window.web3
+    const web3 = this.state.web3
     const accounts = await web3.eth.getAccounts()
     this.setState({ account: accounts[0] })
 
