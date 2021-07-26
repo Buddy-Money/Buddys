@@ -180,7 +180,7 @@ class MyDonations extends Component {
     })
   }
 
-  handlerefundDonation(evt) {
+  handleRefundDonation(evt) {
     let donationId = evt.target.name
     this.receiveDonation(donationId)
   }
