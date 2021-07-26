@@ -142,7 +142,7 @@ class MyRequests extends Component {
     })
   }
 
-  handlereceiveDonation(evt) {
+  handleReceiveDonation(evt) {
     let donationId = evt.target.name
     this.receiveDonation(donationId)
   }
