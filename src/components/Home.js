@@ -1,17 +1,18 @@
 import React, { Component } from 'react';
 import Donator from '../abis/Donator.json'
-import Donations from './Donations.js'
 import Web3 from 'web3';
+import Donation from './Donation.js'
+import Request from './Request.js'
 import InputGroup from 'react-bootstrap/InputGroup'
 import FormControl from 'react-bootstrap/FormControl'
 import Button from 'react-bootstrap/Button'
 import Container from 'react-bootstrap/Container'
-import './DonationRequests.css'
+import './Home.css'
 
 const ipfsClient = require('ipfs-http-client')
 const ipfs = ipfsClient({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' })
 
-class DonationRequests extends Component {
+class Home extends Component {
 
   constructor(state) {
     super(state)
@@ -228,25 +229,14 @@ class DonationRequests extends Component {
           {this.state.donationRequests.map((donationRequest, key) => {
             return (
               <div className="card mb-4" key={key} >
-                <div className="card-header">
-                  <small className="text-muted">
-                    Receiver Address: {donationRequest.receiverAddress}
-                  </small>
-                </div>
 
                 <ul id="donationRequestList" className="list-group list-group-flush">
-                  <li className="list-group-item">
-                    <p className="text-center"><img src={`https://ipfs.infura.io/ipfs/${donationRequest.hash}`} style={{ maxWidth: '800px' }} alt=""/></p>
-                    <p>{donationRequest.description}</p>
-                  </li>
+                  <Request
+                    request={donationRequest}
+                    web3={this.state.web3}
+                  />
 
-                  <li key={key} className="list-group-item py-2">
-                    <small className="float-left mt-1 text-muted">
-                      Outstanding Donations: {window.web3.utils.fromWei(donationRequest.unclaimedDonations.toString(), 'Ether')} ETH <br></br>
-                      Accepted Donations: {window.web3.utils.fromWei(donationRequest.claimedDonations.toString(), 'Ether')} ETH
-                    </small></li>
                   <li className="list-group-item">
-
                     <InputGroup className="mb-3 input-div">
                       <FormControl
                         onChange={evt => this.updateDonationAmount(evt)}
@@ -272,13 +262,19 @@ class DonationRequests extends Component {
                         </Button>
                       </InputGroup.Append>
                     </InputGroup>
-
                   </li>
+
                   {this.state.donationsListsForRequests[donationRequest.id - 1].length > 0 ?
-                    <li className="list-group-item">
-                      <Donations donations={this.state.donationsListsForRequests[donationRequest.id - 1]}
-                        web3={this.state.web3}></Donations>
-                    </li> : null}
+                    Array.from(this.state.donationsListsForRequests[donationRequest.id - 1]).map((donation, key) => {
+                      return (<ul key={key} id="donationsList" className="list-group list-group-flush">
+                        <li key={key} className="list-group-item">
+                          <Donation
+                            donation={donation}
+                            web3={this.state.web3}
+                          /></li>
+                      </ul>
+                      )
+                    }) : null}
                 </ul>
               </div>
             )
@@ -289,4 +285,4 @@ class DonationRequests extends Component {
   }
 }
 
-export default DonationRequests;
+export default Home;
