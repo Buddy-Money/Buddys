@@ -24,7 +24,7 @@ class Request extends Component {
             <Figure>
               <Figure.Image
                 src={`https://ipfs.infura.io/ipfs/${this.props.request.hash}`}
-                style={{ maxWidth: '800px' }} alt="" />
+                style={{ maxWidth: '650px' }} alt="" />
             </Figure>
           </div>
           <p>{this.props.request.description}</p>

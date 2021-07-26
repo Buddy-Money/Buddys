@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import Donator from '../abis/Donator.json'
-import Request from './Request.js'
-import Donation from './Donation.js'
+import Donator from '../../abis/Donator.json'
+import Request from '../entities/request/Request.js'
+import Donation from '../entities/donation/Donation.js'
 import Web3 from 'web3';
 import Container from 'react-bootstrap/Container'
 import Button from 'react-bootstrap/Button'

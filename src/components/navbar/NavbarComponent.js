@@ -2,10 +2,10 @@ import React, { Component } from 'react';
 import Container from 'react-bootstrap/Container'
 import { Navbar, Nav } from 'react-bootstrap';
 import { Link, Switch, Route, Redirect } from 'react-router-dom'
-import Logo from '../Logo.png'
-import Home from './Home';
-import MyDonations from './MyDonations';
-import MyRequests from './MyRequests';
+import Logo from '../../Logo.png'
+import Home from '../home/Home';
+import MyDonations from '../my-donations/MyDonations';
+import MyRequests from '../my-requests/MyRequests';
 
 class NavbarComponent extends Component {
 
