@@ -21,8 +21,8 @@ class Home extends Component {
       web3: null,
       account: '',
       donator: null,
-      donationRequests: [],
-      donationRequestsCount: 0,
+      requests: [],
+      requestsCount: 0,
       donations: [],
       donationsCount: 0,
       donationsListsForRequests: [],
@@ -69,13 +69,13 @@ class Home extends Component {
       const donator = new web3.eth.Contract(Donator.abi, networkData.address)
       this.setState({ donator })
 
-      const donationRequestsCount = await donator.methods.donationRequestsCount().call()
-      this.setState({ donationRequestsCount })
+      const requestsCount = await donator.methods.requestsCount().call()
+      this.setState({ requestsCount })
 
       const donationsCount = await donator.methods.donationsCount().call()
       this.setState({ donationsCount })
 
-      await this.buildDonationRequestsList()
+      await this.buildRequestsList()
       await this.buildDonationsList()
       await this.buildDonationsListForEachRequest()
 
@@ -87,19 +87,19 @@ class Home extends Component {
   }
 
   /*
-  * Build the list of DonationRequests from the smart contract.
+  * Build the list of Requests from the smart contract.
   */
-  async buildDonationRequestsList() {
-    for (var i = 1; i <= this.state.donationRequestsCount; i++) {
-      const donationRequest = await this.state.donator.methods.donationRequests(i).call()
+  async buildRequestsList() {
+    for (var i = 1; i <= this.state.requestsCount; i++) {
+      const request = await this.state.donator.methods.requests(i).call()
       this.setState({
-        donationRequests: [...this.state.donationRequests, donationRequest]
+        requests: [...this.state.requests, request]
       })
     }
 
-    // Sort donationRequests. Show requests with the most donations first.
+    // Sort requests. Show requests with the most donations first.
     this.setState({
-      donationRequests: this.state.donationRequests.sort((a, b) => b.unclaimedDonations - a.unclaimedDonations)
+      requests: this.state.requests.sort((a, b) => b.outstandingDonations - a.outstandingDonations)
     })
   }
 
@@ -116,10 +116,10 @@ class Home extends Component {
   }
 
   /*
-  * Build a separate list of Donations for each DonationRequest.
+  * Build a separate list of Donations for each Request.
   */
   async buildDonationsListForEachRequest() {
-    for (var i = 0; i < this.state.donationRequestsCount; i++) {
+    for (var i = 0; i < this.state.requestsCount; i++) {
       const list = await this.buildDonationsByRequestId(i + 1)
       this.setState({
         donationsListsForRequests: [...this.state.donationsListsForRequests, list]
@@ -128,12 +128,12 @@ class Home extends Component {
   }
 
   /*
-  * Used to build a list of Donations for a single DonationRequest.
+  * Used to build a list of Donations for a single Request.
   */
-  async buildDonationsByRequestId(donationRequestId) {
+  async buildDonationsByRequestId(requestId) {
     let donations = []
     for (var i = 0; i < this.state.donationsCount; i++) {
-      if (this.state.donations[i].donationRequestId == donationRequestId) {
+      if (this.state.donations[i].requestId == requestId) {
         donations.push(this.state.donations[i])
       }
     }
@@ -151,7 +151,7 @@ class Home extends Component {
     }
   }
 
-  uploadDonationRequest = description => {
+  uploadRequest = (description, title) => {
     ipfs.add(this.state.buffer, (error, result) => {
       if (error) {
         console.error(error)
@@ -159,7 +159,7 @@ class Home extends Component {
       }
 
       this.setState({ loading: true })
-      this.state.donator.methods.uploadDonationRequest(result[0].hash, description).send({ from: this.state.account }).on('transactionHash', (hash) => {
+      this.state.donator.methods.uploadRequest(result[0].hash, description).send({ from: this.state.account }).on('transactionHash', (hash) => {
         this.setState({ loading: false })
       })
     })
@@ -193,7 +193,7 @@ class Home extends Component {
   handleDonate(evt) {
     let amount = this.state.donationAmount
     let donationDescription = this.state.donationDescription
-    let donationAmount = window.web3.utils.toWei(amount.toString(), 'Ether')
+    let donationAmount = this.state.web3.utils.toWei(amount.toString(), 'Ether')
     let expirationDate = new Date(this.state.expirationDate)
     let expirationDateInUnixTime = expirationDate / 1000;
     this.donate(evt.target.name, donationDescription, expirationDateInUnixTime, donationAmount)
@@ -207,33 +207,46 @@ class Home extends Component {
       return (
         <Container className="container">
           <p>&nbsp;</p>
-          <h2>Request a Donation</h2>
+          <h2>Submit a new Request for Donations!</h2>
           <form onSubmit={(event) => {
             event.preventDefault()
-            const description = this.donationRequestDescription.value
-            this.uploadDonationRequest(description)
+            const description = this.requestDescription.value
+            const title = this.requestTitle.value
+            this.uploadRequest(description, title)
           }} >
             <input type='file' accept=".jpg, .jpeg, .png, .bmp, .gif" onChange={this.captureFile} />
             <div className="form-group mr-sm-2">
               <br></br>
               <textarea
-                id="donationRequestDescription"
-                ref={(input) => { this.donationRequestDescription = input }}
+                id="requestTitle"
+                ref={(input) => { this.requestTitle = input }}
                 className="form-control"
-                placeholder="Description..."
+                rows={1}
+                placeholder=
+                "Request Title: Make it short and sweet!"
+                required />
+            </div><br></br>
+            <div className="form-group mr-sm-2">
+              <textarea
+                id="requestDescription"
+                ref={(input) => { this.requestDescription = input }}
+                className="form-control"
+                rows={3}
+                placeholder=
+                "Describe how you can help the world with your Donations..."
                 required />
             </div><br></br>
             <Button type="submit" className="btn btn-primary btn-block btn-lg submit-button">Submit!</Button>
           </form>
           <p>&nbsp;</p>
 
-          {this.state.donationRequests.map((donationRequest, key) => {
+          {this.state.requests.map((request, key) => {
             return (
               <div className="card mb-4" key={key} >
 
-                <ul id="donationRequestList" className="list-group list-group-flush">
+                <ul id="requestList" className="list-group list-group-flush">
                   <Request
-                    request={donationRequest}
+                    request={request}
                     web3={this.state.web3}
                   />
 
@@ -246,7 +259,7 @@ class Home extends Component {
                       />
                       <FormControl
                         onChange={evt => this.updateDonationDescription(evt)}
-                        placeholder="Add a Description"
+                        placeholder="Comment..."
                         aria-label="Donation Description"
                       />
                       <FormControl
@@ -257,16 +270,16 @@ class Home extends Component {
                       />
                       <InputGroup.Append>
                         <Button
-                          name={donationRequest.id}
+                          name={request.id}
                           onClick={(event) => { this.handleDonate(event) }}>
-                          Donate
+                          Donate!
                         </Button>
                       </InputGroup.Append>
                     </InputGroup>
                   </li>
 
-                  {this.state.donationsListsForRequests[donationRequest.id - 1].length > 0 ?
-                    Array.from(this.state.donationsListsForRequests[donationRequest.id - 1]).map((donation, key) => {
+                  {this.state.donationsListsForRequests[request.id - 1].length > 0 ?
+                    Array.from(this.state.donationsListsForRequests[request.id - 1]).map((donation, key) => {
                       return (<ul key={key} id="donationsList" className="list-group list-group-flush">
                         <li key={key} className="list-group-item">
                           <Donation

@@ -16,9 +16,9 @@ class MyDonations extends Component {
       web3: null,
       account: '',
       donator: null,
-      donationRequests: [],
-      donationRequestsCount: 0,
-      donationRequestIds: [],
+      requests: [],
+      requestsCount: 0,
+      requestIds: [],
       donations: [],
       donationsCount: 0,
       donationsListsForRequests: [],
@@ -62,8 +62,8 @@ class MyDonations extends Component {
       const donator = new web3.eth.Contract(Donator.abi, networkData.address)
       this.setState({ donator })
 
-      const donationRequestsCount = await donator.methods.donationRequestsCount().call()
-      this.setState({ donationRequestsCount })
+      const requestsCount = await donator.methods.requestsCount().call()
+      this.setState({ requestsCount })
 
       const donationsCount = await donator.methods.donationsCount().call()
       this.setState({ donationsCount })
@@ -71,7 +71,7 @@ class MyDonations extends Component {
       await this.buildDonationsList()
 
       if (this.state.donations.length > 0) {
-        await this.buildDonationRequestsList()
+        await this.buildRequestsList()
         await this.buildDonationsListForEachRequest()
       }
 
@@ -107,52 +107,52 @@ class MyDonations extends Component {
       donationsCount: this.state.donations.length
     })
 
-    // Store the ids of the DonationRequests that were donated to.
+    // Store the ids of the Requests that were donated to.
     for (var i = 0; i < this.state.donationsCount; i++) {
       this.setState({
-        donationRequestIds: [
-          ...this.state.donationRequestIds,
-          this.state.donations[i].donationRequestId
+        requestIds: [
+          ...this.state.requestIds,
+          this.state.donations[i].requestId
         ]
       })
     }
   }
 
   /*
-  * Build the list of DonationRequests from the smart contract.
+  * Build the list of Requests from the smart contract.
   */
-  async buildDonationRequestsList() {
-    // Get all DonationRequests.
-    for (var i = 1; i <= this.state.donationRequestsCount; i++) {
-      const donationRequest = await this.state.donator.methods.donationRequests(i).call()
+  async buildRequestsList() {
+    // Get all Requests.
+    for (var i = 1; i <= this.state.requestsCount; i++) {
+      const request = await this.state.donator.methods.requests(i).call()
       this.setState({
-        donationRequests: [...this.state.donationRequests, donationRequest]
+        requests: [...this.state.requests, request]
       })
     }
 
     // Only keep requests with donation(s) issued by the active account
-    let donationRequestsDonatedTo = []
-    for (var i = 0; i < this.state.donationRequestsCount; i++) {
-      if (this.state.donationRequestIds.includes(this.state.donationRequests[i].id)) {
-        donationRequestsDonatedTo.push(this.state.donationRequests[i])
+    let requestsDonatedTo = []
+    for (var i = 0; i < this.state.requestsCount; i++) {
+      if (this.state.requestIds.includes(this.state.requests[i].id)) {
+        requestsDonatedTo.push(this.state.requests[i])
       }
     }
 
     this.setState({
-      donationRequests: donationRequestsDonatedTo
+      requests: requestsDonatedTo
     })
 
-    // Sort donationRequests. Show requests with the most donations first.
+    // Sort requests. Show requests with the most donations first.
     this.setState({
-      donationRequests: this.state.donationRequests.sort((a, b) => b.unclaimedDonations - a.unclaimedDonations)
+      requests: this.state.requests.sort((a, b) => b.outstandingDonations - a.outstandingDonations)
     })
   }
 
   /*
-  * Build a separate list of Donations for each DonationRequest.
+  * Build a separate list of Donations for each Request.
   */
   async buildDonationsListForEachRequest() {
-    for (var i = 0; i < this.state.donationRequestsCount; i++) {
+    for (var i = 0; i < this.state.requestsCount; i++) {
       const list = await this.buildDonationsByRequestId(i + 1)
       this.setState({
         donationsListsForRequests: [...this.state.donationsListsForRequests, list]
@@ -161,12 +161,12 @@ class MyDonations extends Component {
   }
 
   /*
-  * Used to build a list of Donations for a single DonationRequest.
+  * Used to build a list of Donations for a single Request.
   */
-  async buildDonationsByRequestId(donationRequestId) {
+  async buildDonationsByRequestId(requestId) {
     let donations = []
     for (var i = 0; i < this.state.donationsCount; i++) {
-      if (this.state.donations[i].donationRequestId == donationRequestId) {
+      if (this.state.donations[i].requestId == requestId) {
         donations.push(this.state.donations[i])
       }
     }
@@ -189,21 +189,21 @@ class MyDonations extends Component {
     if (this.state.loading) {
       return (<label className="text-center">Loading...</label>)
     }
-    else if (this.state.donationRequests.length !== 0) {
+    else if (this.state.requests.length !== 0) {
       return (
         <Container className="container">
 
-          {this.state.donationRequests.map((donationRequest, key) => {
+          {this.state.requests.map((request, key) => {
             return (
               <div className="card mb-4" key={key} >
 
-                <ul id="donationRequestList" className="list-group list-group-flush">
+                <ul id="requestList" className="list-group list-group-flush">
                   <Request
-                    request={donationRequest}
+                    request={request}
                     web3={this.state.web3}
                   />
 
-                  {Array.from(this.state.donationsListsForRequests[donationRequest.id - 1]).map((donation, key) => {
+                  {Array.from(this.state.donationsListsForRequests[request.id - 1]).map((donation, key) => {
                     return (<ul key={key} id="donationsList" className="list-group list-group-flush">
                       <li key={key} className="list-group-item">
                         <Donation

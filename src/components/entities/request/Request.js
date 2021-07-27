@@ -16,7 +16,7 @@ class Request extends Component {
       <div>
         <div className="card-header">
           <small className="text-muted">
-            Receiver Address: {this.props.request.receiverAddress}
+            Requestor: {this.props.request.requestor}
           </small>
         </div>
         <li className="list-group-item">
@@ -30,12 +30,12 @@ class Request extends Component {
           <p>{this.props.request.description}</p>
           <small className="text-muted">
             Outstanding Donations: {
-              this.props.web3.utils.fromWei(this.props.request.unclaimedDonations.toString(), 'Ether')
+              this.props.web3.utils.fromWei(this.props.request.outstandingDonations.toString(), 'Ether')
             }
             {' '}ETH</small><br></br>
           <small className="text-muted">
             Accepted Donations: {
-              this.props.web3.utils.fromWei(this.props.request.claimedDonations.toString(), 'Ether')
+              this.props.web3.utils.fromWei(this.props.request.acceptedDonations.toString(), 'Ether')
             }
             {' '}ETH</small>
         </li>
