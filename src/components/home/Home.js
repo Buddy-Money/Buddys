@@ -2,13 +2,14 @@ import React, { Component } from 'react';
 import Donator from '../../abis/Donator.json'
 import Web3 from 'web3';
 import Web3Modal from "web3modal";
-import Donation from '../entities/donation/Donation.js'
-import Request from '../entities/request/Request.js'
-import InputGroup from 'react-bootstrap/InputGroup'
-import FormControl from 'react-bootstrap/FormControl'
-import Button from 'react-bootstrap/Button'
-import Container from 'react-bootstrap/Container'
+import RequestCard from '../entities/request-card/RequestCard.js'
 import './Home.css'
+import {
+  Container,
+  Button,
+  Modal
+} from 'react-bootstrap'
+import RequestModal from './RequestModal/RequestModal';
 
 const ipfsClient = require('ipfs-http-client')
 const ipfs = ipfsClient({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' })
@@ -29,7 +30,8 @@ class Home extends Component {
       donationAmount: 0,
       donationDescription: '',
       expirationDate: new Date(),
-      loading: true
+      loading: true,
+      modal: false
     }
   }
 
@@ -151,7 +153,7 @@ class Home extends Component {
     }
   }
 
-  uploadRequest = (description, title) => {
+  uploadRequest = (title, description) => {
     ipfs.add(this.state.buffer, (error, result) => {
       if (error) {
         console.error(error)
@@ -159,7 +161,7 @@ class Home extends Component {
       }
 
       this.setState({ loading: true })
-      this.state.donator.methods.uploadRequest(result[0].hash, description).send({ from: this.state.account }).on('transactionHash', (hash) => {
+      this.state.donator.methods.uploadRequest(result[0].hash, title, description).send({ from: this.state.account }).on('transactionHash', (hash) => {
         this.setState({ loading: false })
       })
     })
@@ -199,12 +201,35 @@ class Home extends Component {
     this.donate(evt.target.name, donationDescription, expirationDateInUnixTime, donationAmount)
   }
 
+  toggleModal(event, key) {
+    console.log(this.state.modal)
+    let currentFlag = this.state.modal
+    this.setState({
+      modal: !currentFlag
+    })
+
+    let request = this.state.requests[event.target.name]
+
+    return this.state.modal && (
+      <RequestModal
+        show={this.state.modal}
+        request={request}
+        web3={this.state.web3}
+        index={key}
+        donationsListsForRequests={this.state.donationsListsForRequests}
+        updateDonationAmount={this.updateDonationAmount}
+        updateDonationDescription={this.updateDonationDescription}
+        updateDonationDescription={this.updateDonationDescription} />
+    );
+  }
+
   render() {
     if (this.state.loading) {
       return (<label className="text-center">Loading...</label>)
     }
     else {
       return (
+        // Submit a new Request
         <Container className="container">
           <p>&nbsp;</p>
           <h2>Submit a new Request for Donations!</h2>
@@ -212,7 +237,7 @@ class Home extends Component {
             event.preventDefault()
             const description = this.requestDescription.value
             const title = this.requestTitle.value
-            this.uploadRequest(description, title)
+            this.uploadRequest(title, description)
           }} >
             <input type='file' accept=".jpg, .jpeg, .png, .bmp, .gif" onChange={this.captureFile} />
             <div className="form-group mr-sm-2">
@@ -240,59 +265,24 @@ class Home extends Component {
           </form>
           <p>&nbsp;</p>
 
-          {this.state.requests.map((request, key) => {
-            return (
-              <div className="card mb-4" key={key} >
-
-                <ul id="requestList" className="list-group list-group-flush">
-                  <Request
+          {/* Cards */}
+          {
+            this.state.requests.map((request, key) => {
+              return (
+                <Button
+                key={key}
+                  name={request.id}
+                  className="text-left"
+                  variant="outline-primary"
+                  onClick={(event) => { this.toggleModal(event, key) }}>
+                  <RequestCard
                     request={request}
                     web3={this.state.web3}
-                  />
-
-                  <li className="list-group-item">
-                    <InputGroup className="mb-3 input-div">
-                      <FormControl
-                        onChange={evt => this.updateDonationAmount(evt)}
-                        placeholder="Amount of Ether"
-                        aria-label="Amount of Ether"
-                      />
-                      <FormControl
-                        onChange={evt => this.updateDonationDescription(evt)}
-                        placeholder="Comment..."
-                        aria-label="Donation Description"
-                      />
-                      <FormControl
-                        type="date"
-                        onChange={evt => this.updateExpirationDate(evt)}
-                        placeholder="Exp Date"
-                        aria-label="Expiration Date"
-                      />
-                      <InputGroup.Append>
-                        <Button
-                          name={request.id}
-                          onClick={(event) => { this.handleDonate(event) }}>
-                          Donate!
-                        </Button>
-                      </InputGroup.Append>
-                    </InputGroup>
-                  </li>
-
-                  {this.state.donationsListsForRequests[request.id - 1].length > 0 ?
-                    Array.from(this.state.donationsListsForRequests[request.id - 1]).map((donation, key) => {
-                      return (<ul key={key} id="donationsList" className="list-group list-group-flush">
-                        <li key={key} className="list-group-item">
-                          <Donation
-                            donation={donation}
-                            web3={this.state.web3}
-                          /></li>
-                      </ul>
-                      )
-                    }) : null}
-                </ul>
-              </div>
-            )
-          })}
+                    index={key} />
+                </Button>
+              );
+            })
+          }
         </Container>
       );
     }

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Donator from '../../abis/Donator.json'
-import Request from '../entities/request/Request.js'
+import RequestCard from '../entities/request-card/RequestCard.js'
 import Donation from '../entities/donation/Donation.js'
 import Web3 from 'web3';
 import Web3Modal from "web3modal";
@@ -165,7 +165,7 @@ class MyRequests extends Component {
               <div className="card mb-4" key={key} >
 
                 <ul id="requestList" className="list-group list-group-flush">
-                  <Request
+                  <RequestCard
                     request={request}
                     web3={this.state.web3}
                   />
