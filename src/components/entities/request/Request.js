@@ -15,6 +15,9 @@ class Request extends Component {
     return (
       <div>
         <div className="card-header">
+          <label>
+            {this.props.request.title}
+          </label><br></br>
           <small className="text-muted">
             Requestor: {this.props.request.requestor}
           </small>
@@ -28,13 +31,16 @@ class Request extends Component {
             </Figure>
           </div>
           <p>{this.props.request.description}</p>
+          <label className="text-bold">
+            {this.props.request.numDonations} Donations
+          </label><br></br>
           <small className="text-muted">
-            Outstanding Donations: {
+            Outstanding: {
               this.props.web3.utils.fromWei(this.props.request.outstandingDonations.toString(), 'Ether')
             }
             {' '}ETH</small><br></br>
           <small className="text-muted">
-            Accepted Donations: {
+            Accepted: {
               this.props.web3.utils.fromWei(this.props.request.acceptedDonations.toString(), 'Ether')
             }
             {' '}ETH</small>

@@ -151,7 +151,7 @@ class Home extends Component {
     }
   }
 
-  uploadRequest = (description, title) => {
+  uploadRequest = (title, description) => {
     ipfs.add(this.state.buffer, (error, result) => {
       if (error) {
         console.error(error)
@@ -159,7 +159,7 @@ class Home extends Component {
       }
 
       this.setState({ loading: true })
-      this.state.donator.methods.uploadRequest(result[0].hash, description).send({ from: this.state.account }).on('transactionHash', (hash) => {
+      this.state.donator.methods.uploadRequest(result[0].hash, title, description).send({ from: this.state.account }).on('transactionHash', (hash) => {
         this.setState({ loading: false })
       })
     })
@@ -212,7 +212,7 @@ class Home extends Component {
             event.preventDefault()
             const description = this.requestDescription.value
             const title = this.requestTitle.value
-            this.uploadRequest(description, title)
+            this.uploadRequest(title, description)
           }} >
             <input type='file' accept=".jpg, .jpeg, .png, .bmp, .gif" onChange={this.captureFile} />
             <div className="form-group mr-sm-2">
@@ -270,6 +270,7 @@ class Home extends Component {
                       />
                       <InputGroup.Append>
                         <Button
+                          variant="outline-primary"
                           name={request.id}
                           onClick={(event) => { this.handleDonate(event) }}>
                           Donate!
@@ -278,6 +279,8 @@ class Home extends Component {
                     </InputGroup>
                   </li>
 
+                  <div className="donations-label">
+                  </div>
                   {this.state.donationsListsForRequests[request.id - 1].length > 0 ?
                     Array.from(this.state.donationsListsForRequests[request.id - 1]).map((donation, key) => {
                       return (<ul key={key} id="donationsList" className="list-group list-group-flush">
