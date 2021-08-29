@@ -11,6 +11,8 @@ Tools:
 - Web3
 
 ## NOTE: Donator is currently being re-developed in Angular
+Please feel free to review the Solidity source code for the new environment here:
+https://github.com/Donator-Eth/Smart-Contracts
 
 Donator lets anyone submit a request for donations on the Ethereum network. The system design mirrors familiar social media platforms. A 'request' fulfills the role of a traditional post. 
 'Requests' include a description and an image. 'Donators' can view active 'requests' and donate DON tokens to their liking. Donated DON is sent to the Donator smart contract.
