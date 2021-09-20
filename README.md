@@ -10,8 +10,12 @@ Tools:
 - Metamask
 - Web3
 
-Donator lets anyone submit a request for donations on the Ethereum network. The system design mirrors familiar social media platforms. Donation Requests fulfill the role of a traditional post. 
-Donation Requests include a description and an image. Users can view active Donation Requests and donate to their liking. Donated funds are sent to the Donator smart contract.
-The issuer of a Donation Request, known as the Receiver, must accept the funds that were donated to their Donation Request.
-A Donator may revoke their donation before a Receiver accepts, causing the donated funds to return to the Donator.
+## NOTE: Donator is currently being re-developed in Angular
+Please feel free to review the Solidity source code for the new environment here:
+https://github.com/Donator-Eth/Smart-Contracts
+
+Donator lets anyone submit a request for donations on the Ethereum network. The system design mirrors familiar social media platforms. A 'request' fulfills the role of a traditional post. 
+'Requests' include a description and an image. 'Donators' can view active 'requests' and donate DON tokens to their liking. Donated DON is sent to the Donator smart contract.
+The issuer of a 'request', known as the 'requestor', must first accept the DON donated to their Request to receive funds.
+A 'donator' may revoke their 'donation' before a 'requestor' accepts, causing the donated funds to return to the 'donator'.
 
