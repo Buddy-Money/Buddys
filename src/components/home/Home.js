@@ -4,10 +4,13 @@ import Web3 from 'web3';
 import Web3Modal from "web3modal";
 import Donation from '../entities/donation/Donation.js'
 import Request from '../entities/request/Request.js'
-import InputGroup from 'react-bootstrap/InputGroup'
-import FormControl from 'react-bootstrap/FormControl'
-import Button from 'react-bootstrap/Button'
-import Container from 'react-bootstrap/Container'
+import {
+  InputGroup,
+  FormControl,
+  Button,
+  Container,
+  Form,
+} from 'react-bootstrap'
 import './Home.css'
 
 const ipfsClient = require('ipfs-http-client')
@@ -165,9 +168,9 @@ class Home extends Component {
     })
   }
 
-  donate(id, donationDescription, expDateInUnixTime, donationAmount) {
+  donate(id, donationDescription, donationAmount) {
     this.setState({ loading: true })
-    this.state.donator.methods.donate(id, donationDescription, expDateInUnixTime).send({ from: this.state.account, value: donationAmount }).on('transactionHash', (hash) => {
+    this.state.donator.methods.donate(id, donationDescription).send({ from: this.state.account, value: donationAmount }).on('transactionHash', (hash) => {
       this.setState({ loading: false })
     })
   }
@@ -194,9 +197,7 @@ class Home extends Component {
     let amount = this.state.donationAmount
     let donationDescription = this.state.donationDescription
     let donationAmount = this.state.web3.utils.toWei(amount.toString(), 'Ether')
-    let expirationDate = new Date(this.state.expirationDate)
-    let expirationDateInUnixTime = expirationDate / 1000;
-    this.donate(evt.target.name, donationDescription, expirationDateInUnixTime, donationAmount)
+    this.donate(evt.target.name, donationDescription, donationAmount)
   }
 
   render() {
@@ -214,7 +215,9 @@ class Home extends Component {
             const title = this.requestTitle.value
             this.uploadRequest(title, description)
           }} >
-            <input type='file' accept=".jpg, .jpeg, .png, .bmp, .gif" onChange={this.captureFile} />
+            <Form.Group controlId="formFile" className="mb-3">
+              <Form.Control type='file' accept=".jpg, .jpeg, .png, .bmp, .gif" onChange={this.captureFile} />
+            </Form.Group>
             <div className="form-group mr-sm-2">
               <br></br>
               <textarea
@@ -261,12 +264,6 @@ class Home extends Component {
                         onChange={evt => this.updateDonationDescription(evt)}
                         placeholder="Comment..."
                         aria-label="Donation Description"
-                      />
-                      <FormControl
-                        type="date"
-                        onChange={evt => this.updateExpirationDate(evt)}
-                        placeholder="Exp Date"
-                        aria-label="Expiration Date"
                       />
                       <InputGroup.Append>
                         <Button

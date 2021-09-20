@@ -182,7 +182,7 @@ class MyDonations extends Component {
 
   handleRefundDonation(evt) {
     let donationId = evt.target.name
-    this.receiveDonation(donationId)
+    this.refundDonation(donationId)
   }
 
   render() {
