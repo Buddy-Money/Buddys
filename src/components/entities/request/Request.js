@@ -19,7 +19,7 @@ class Request extends Component {
             {this.props.request.title}
           </label><br></br>
           <small className="text-muted">
-            Requestor: {this.props.request.requestor}
+          Requester: {this.props.request.requester}
           </small>
         </div>
         <li className="list-group-item">

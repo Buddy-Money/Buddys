@@ -6,18 +6,12 @@ contract Donator {
 
     uint256 public requestsCount = 0;
     mapping(uint256 => Request) public requests;
-    uint256 public idsOfRequestsCount = 0;
-    uint256 [maxEntries] idsOfRequests;
 
     uint256 public achievementsCount = 0;
     mapping(uint256 => Achievement) achievements;
-    uint256 public idsOfAchievementsCount = 0;
-    uint256 [maxEntries] idsOfAchievements;
 
     uint256 public donationsCount = 0;
     mapping(uint256 => Donation) public donations;
-    uint256 public idsOfDonationsCount = 0;
-    uint256 [maxEntries] idsOfDonations;
 
     struct Request {
         uint256 id;
@@ -29,6 +23,7 @@ contract Donator {
         uint256 outstandingDonations;
         uint256 acceptedDonations;
         address payable requester;
+        bool active;
     }
 
     struct Achievement {
@@ -38,6 +33,7 @@ contract Donator {
         string description;
         uint256 requestId;
         address payable requester;
+        bool active;
     }
 
     struct Donation {
@@ -46,10 +42,12 @@ contract Donator {
         uint256 amount;
         uint256 requestId;
         address payable donator;
+        bool active;
     }
 
     constructor() public {
         //tokenAddress = _tokenAddress;
+        //owner = msg.sender
     }
     
     function() external payable {}
@@ -75,12 +73,9 @@ contract Donator {
             0,
             0,
             0,
-            msg.sender
+            msg.sender,
+            true
         );
-        
-        // Store the id
-        idsOfRequests[idsOfRequestsCount] = requestsCount;
-        idsOfRequestsCount++;
     }
 
     function uploadAchievement(
@@ -107,12 +102,9 @@ contract Donator {
             _title,
             _description,
             _requestId,
-            msg.sender
+            msg.sender,
+            true
         );
-        
-        // Store the id
-        idsOfAchievements[idsOfAchievementsCount] = achievementsCount;
-        idsOfAchievementsCount++;
     }
 
     function donate(uint256 _requestId, string memory _description)
@@ -120,7 +112,7 @@ contract Donator {
         payable
     {
         require(
-            doesRequestExist(_requestId), "Invalid _requestId"
+            requests[_requestId].active, "Requests Inactive"
         );
 
         Request memory _request = requests[_requestId];
@@ -142,17 +134,14 @@ contract Donator {
             _description,
             msg.value,
             _requestId,
-            msg.sender
+            msg.sender,
+            true
         );
-        
-        // Store the id
-        idsOfDonations[idsOfDonationsCount] = donationsCount;
-        idsOfDonationsCount++;
     }
 
     function receiveDonation(uint256 _donationId) public payable {
         require(
-            doesDonationExist(_donationId), "Invalid _donationId"
+            donations[_donationId].active, "Donation Inactive"
         );
 
         Donation memory _donation = donations[_donationId];
@@ -165,7 +154,7 @@ contract Donator {
             "Only the requester may receive the Donations of their Request."
         );
 
-        // Pay the receiver. Funds come from the smart contract.
+        // Pay the requester. Funds come from the smart contract.
         _request.requester.transfer(_donation.amount);
 
         // Update the fields on the Request
@@ -173,12 +162,14 @@ contract Donator {
         _request.outstandingDonations -= _donation.amount;
         requests[_request.id] = _request;
 
-        deleteDonation(_donationId);
+        // Make the Donation inactive
+        _donation.active = false;
+        donations[_donation.id] = _donation;
     }
     
     function refundDonation(uint256 _donationId) public payable {
         require(
-            doesDonationExist(_donationId), "Invalid _donationId"
+            donations[_donationId].active, "Donation Inactive"
         );
         
         Donation memory _donation = donations[_donationId];
@@ -200,102 +191,13 @@ contract Donator {
         _request.numDonations -= 1;
         requests[_request.id] = _request;
         
-        deleteDonation(_donationId);
+        // Make the Donation inactive
+        _donation.active = false;
+        donations[_donation.id] = _donation;
     }
 
     function deleteRequest(uint256 _requestId) private {
-        require(
-            doesRequestExist(_requestId), "Invalid _requestId"
-            );
-        
-        // Delete id from array
-        uint256 _index = getIndexOfRequestId(_requestId);
-        idsOfRequests[_index] = idsOfRequests[idsOfRequests.length - 1];
-        delete idsOfRequests[idsOfRequests.length - 1];
-        idsOfRequestsCount--;
-        
-        requestsCount--;
-        delete (requests[_requestId]);
-    }
-
-    function deleteAchievemnt(uint256 _achievementId) private {
-        require(
-             doesAchievementExist(_achievementId), "Invalid _achievementId"
-            );
-        
-        // Delete id from array
-        uint256 _index = getIndexOfAchievementId(_achievementId);
-        idsOfAchievements[_index] = idsOfAchievements[idsOfAchievements.length - 1];
-        delete idsOfAchievements[idsOfAchievements.length - 1];
-        idsOfAchievementsCount--;
-        
-        achievementsCount--;
-        delete (achievements[_achievementId]);
-    }
-
-    function deleteDonation(uint256 _donationId) private {
-        require(
-            doesDonationExist(_donationId), "Invalid _donationId"
-            );
-        
-        // Delete id from array
-        uint256 _index = getIndexOfDonationId(_donationId);
-        idsOfDonations[_index] = idsOfDonations[idsOfDonations.length - 1];
-        delete idsOfDonations[idsOfDonations.length - 1];
-        idsOfDonationsCount--;
-        
-        donationsCount--;
-        delete (donations[_donationId]);
-    }
-    
-        function getIndexOfRequestId(uint256 _id) private view returns(uint256 index) {
-        for (uint256 i = 0; i < idsOfRequestsCount; i++) {
-            if (idsOfRequests[i] == _id) {
-                return i;
-            }
-        }
-    }
-    
-        function getIndexOfAchievementId(uint256 _id) private view returns(uint256 index) {
-        for (uint256 i = 0; i < idsOfAchievementsCount; i++) {
-            if (idsOfAchievements[i] == _id) {
-                return i;
-            }
-        }
-    }
-    
-    function getIndexOfDonationId(uint256 _id) private view returns(uint256 index) {
-        for (uint256 i = 0; i < idsOfDonationsCount; i++) {
-            if (idsOfDonations[i] == _id) {
-                return i;
-            }
-        }
-    }
-    
-    function doesRequestExist(uint256 _requestId) private view returns(bool exists) {
-        for (uint256 i = 0; i < idsOfRequestsCount; i++) {
-            if (idsOfRequests[i] == _requestId) {
-                return true;
-            }
-        }
-        return false;
-    }
-    
-    function doesAchievementExist(uint256 _achievementId) private view returns(bool exists) {
-        for (uint256 i = 0; i < idsOfAchievementsCount; i++) {
-            if (idsOfAchievements[i] == _achievementId) {
-                return true;
-            }
-        }
-        return false;
-    }
-    
-    function doesDonationExist(uint256 _donationId) private view returns(bool exists) {
-        for (uint256 i = 0; i < idsOfDonationsCount; i++) {
-            if (idsOfDonations[i] == _donationId) {
-                return true;
-            }
-        }
-        return false;
+        // Make the Request inactive
+        requests[_requestId].active = false;
     }
 }

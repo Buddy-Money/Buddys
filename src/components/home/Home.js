@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import Donator from '../../abis/Donator.json'
 import Web3 from 'web3';
-import Web3Modal from "web3modal";
 import Donation from '../entities/donation/Donation.js'
 import Request from '../entities/request/Request.js'
 import {
@@ -42,21 +41,17 @@ class Home extends Component {
   }
 
   async loadWeb3() {
-    const providerOptions = {
-      /* See Provider Options Section */
-    };
-
-    const web3Modal = new Web3Modal({
-      network: "mainnet",
-      cacheProvider: true,
-      providerOptions
-    });
-
-    const provider = await web3Modal.connect();
-
-    const web3 = new Web3(provider);
-
-    this.setState({ web3: web3 })
+    if (window.ethereum) {
+      window.web3 = new Web3(window.ethereum)
+      await window.ethereum.enable()
+    }
+    else if (window.web3) {
+      window.web3 = new Web3(window.web3.currentProvider)
+    }
+    else {
+      window.alert('Non-Ethereum browser detected. You should consider trying MetaMask!')
+    }
+    this.setState({ web3: window.web3 })
   }
 
   async loadBlockchainData() {
@@ -244,54 +239,58 @@ class Home extends Component {
           <p>&nbsp;</p>
 
           {this.state.requests.map((request, key) => {
-            return (
-              <div className="card mb-4" key={key} >
+            if (request.active) {
+              return (
+                <div className="card mb-4" key={key} >
 
-                <ul id="requestList" className="list-group list-group-flush">
-                  <Request
-                    request={request}
-                    web3={this.state.web3}
-                  />
+                  <ul id="requestList" className="list-group list-group-flush">
+                    <Request
+                      request={request}
+                      web3={this.state.web3}
+                    />
 
-                  <li className="list-group-item">
-                    <InputGroup className="mb-3 input-div">
-                      <FormControl
-                        onChange={evt => this.updateDonationAmount(evt)}
-                        placeholder="Amount of Ether"
-                        aria-label="Amount of Ether"
-                      />
-                      <FormControl
-                        onChange={evt => this.updateDonationDescription(evt)}
-                        placeholder="Comment..."
-                        aria-label="Donation Description"
-                      />
-                      <InputGroup.Append>
-                        <Button
-                          variant="outline-primary"
-                          name={request.id}
-                          onClick={(event) => { this.handleDonate(event) }}>
-                          Donate!
-                        </Button>
-                      </InputGroup.Append>
-                    </InputGroup>
-                  </li>
+                    <li className="list-group-item">
+                      <InputGroup className="mb-3 input-div">
+                        <FormControl
+                          onChange={evt => this.updateDonationAmount(evt)}
+                          placeholder="Amount of Ether"
+                          aria-label="Amount of Ether"
+                        />
+                        <FormControl
+                          onChange={evt => this.updateDonationDescription(evt)}
+                          placeholder="Comment..."
+                          aria-label="Donation Description"
+                        />
+                        <InputGroup.Append>
+                          <Button
+                            variant="outline-primary"
+                            name={request.id}
+                            onClick={(event) => { this.handleDonate(event) }}>
+                            Donate!
+                          </Button>
+                        </InputGroup.Append>
+                      </InputGroup>
+                    </li>
 
-                  <div className="donations-label">
-                  </div>
-                  {this.state.donationsListsForRequests[request.id - 1].length > 0 ?
-                    Array.from(this.state.donationsListsForRequests[request.id - 1]).map((donation, key) => {
-                      return (<ul key={key} id="donationsList" className="list-group list-group-flush">
-                        <li key={key} className="list-group-item">
-                          <Donation
-                            donation={donation}
-                            web3={this.state.web3}
-                          /></li>
-                      </ul>
-                      )
-                    }) : null}
-                </ul>
-              </div>
-            )
+                    <div className="donations-label">
+                    </div>
+                    {this.state.donationsListsForRequests[request.id - 1].length > 0 ?
+                      Array.from(this.state.donationsListsForRequests[request.id - 1]).map((donation, key) => {
+                        if (donation.active) {
+                          return (<ul key={key} id="donationsList" className="list-group list-group-flush">
+                            <li key={key} className="list-group-item">
+                              <Donation
+                                donation={donation}
+                                web3={this.state.web3}
+                              /></li>
+                          </ul>
+                          )
+                        }
+                      }) : null}
+                  </ul>
+                </div>
+              )
+            }
           })}
         </Container>
       );

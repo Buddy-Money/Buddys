@@ -3,7 +3,6 @@ import Donator from '../../abis/Donator.json'
 import Request from '../entities/request/Request.js'
 import Donation from '../entities/donation/Donation.js'
 import Web3 from 'web3';
-import Web3Modal from "web3modal";
 import Container from 'react-bootstrap/Container'
 import Button from 'react-bootstrap/Button'
 import './MyDonations.css'
@@ -32,21 +31,17 @@ class MyDonations extends Component {
   }
 
   async loadWeb3() {
-    const providerOptions = {
-      /* See Provider Options Section */
-    };
-
-    const web3Modal = new Web3Modal({
-      network: "mainnet",
-      cacheProvider: true,
-      providerOptions
-    });
-
-    const provider = await web3Modal.connect();
-
-    const web3 = new Web3(provider);
-
-    this.setState({ web3: web3 })
+    if (window.ethereum) {
+      window.web3 = new Web3(window.ethereum)
+      await window.ethereum.enable()
+    }
+    else if (window.web3) {
+      window.web3 = new Web3(window.web3.currentProvider)
+    }
+    else {
+      window.alert('Non-Ethereum browser detected. You should consider trying MetaMask!')
+    }
+    this.setState({ web3: window.web3 })
   }
 
   async loadBlockchainData() {
@@ -194,36 +189,40 @@ class MyDonations extends Component {
         <Container className="container">
 
           {this.state.requests.map((request, key) => {
-            return (
-              <div className="card mb-4" key={key} >
+            if (request.active) {
+              return (
+                <div className="card mb-4" key={key} >
 
-                <ul id="requestList" className="list-group list-group-flush">
-                  <Request
-                    request={request}
-                    web3={this.state.web3}
-                  />
+                  <ul id="requestList" className="list-group list-group-flush">
+                    <Request
+                      request={request}
+                      web3={this.state.web3}
+                    />
 
-                  {Array.from(this.state.donationsListsForRequests[request.id - 1]).map((donation, key) => {
-                    return (<ul key={key} id="donationsList" className="list-group list-group-flush">
-                      <li key={key} className="list-group-item">
-                        <Donation
-                          donation={donation}
-                          web3={this.state.web3}
-                        />
-                        <small>
-                          <Button
-                            name={donation.id}
-                            onClick={(event) => { this.handleRefundDonation(event) }}>
-                            Revoke Donation
-                          </Button>
-                        </small>
-                      </li>
-                    </ul>
-                    )
-                  })}
-                </ul>
-              </div>
-            )
+                    {Array.from(this.state.donationsListsForRequests[request.id - 1]).map((donation, key) => {
+                      if (donation.active) {
+                        return (<ul key={key} id="donationsList" className="list-group list-group-flush">
+                          <li key={key} className="list-group-item">
+                            <Donation
+                              donation={donation}
+                              web3={this.state.web3}
+                            />
+                            <small>
+                              <Button
+                                name={donation.id}
+                                onClick={(event) => { this.handleRefundDonation(event) }}>
+                                Revoke Donation
+                              </Button>
+                            </small>
+                          </li>
+                        </ul>
+                        )
+                      }
+                    })}
+                  </ul>
+                </div>
+              )
+            }
           })}
         </Container>
       );
