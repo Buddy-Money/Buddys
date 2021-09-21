@@ -14,7 +14,7 @@ class Donation extends Component {
     return (
       <div>
         <small className="float-left mt-1 text-muted">
-          {this.props.web3.utils.fromWei(this.props.donation.amount.toString(), 'Ether')} ETH <br></br>
+          Amount: {this.props.web3.utils.fromWei(this.props.donation.amount.toString(), 'Ether')} ETH <br></br>
           {this.props.donation.description}
         </small>
       </div>
