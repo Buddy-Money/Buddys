@@ -1,5 +1,5 @@
-# Donator
-## Trustless donations for everybody
+# Buddys
+## A rewarding social media experience to share your best pet memories!
 
 Tools:
 
@@ -10,8 +10,11 @@ Tools:
 - Metamask
 - Web3
 
-Donator lets anyone submit a request for donations on the Ethereum network. The system design mirrors familiar social media platforms. A 'request' fulfills the role of a traditional post. 
-'Requests' include a description and an image. 'Donators' can view active 'requests' and donate DON tokens to their liking. Donated DON is sent to the Donator smart contract.
-The issuer of a 'request', known as the 'requester', must first accept the DON donated to their 'request' to receive funds.
-A 'donator' may revoke their 'donation' before a 'requester' accepts, causing the donated funds to return to the 'donator'.
+The "Buddys" social media dapp is governed by the BUDD social token. To make a post within Buddys, one must stake BUDD to safeguard against inappropriate content. If a post is deemed inappropriate by the community, its stake is burned, thus increasing the value of BUDD for our community.
+
+At it's heart, BUDD is a meme coin, born out of love for a very special buddy. More so, BUDD has true utility. It functions as a reflective token that rewards community members and a social token that governs the Buddys dapp.
+
+# History
+
+Buddys was first built as the "Donator" dapp. It is being rebranded as "Buddys" as part of the Buddy Money community.
 
